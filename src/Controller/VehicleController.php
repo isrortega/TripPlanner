@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/vehicles')]
@@ -35,11 +36,15 @@ class VehicleController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->persist($vehicle);
-            $this->entityManager->flush();
+            try {
+                $this->entityManager->persist($vehicle);
+                $this->entityManager->flush();
 
-            $this->addFlash('success', 'Vehicle created successfully!');
-            return $this->redirectToRoute('vehicle_index');
+                $this->addFlash('success', 'Vehicle created successfully!');
+                return $this->redirectToRoute('vehicle_index');
+            } catch (UniqueConstraintViolationException $e) {
+                $this->addFlash('error', 'The plate number already exists.');
+            }
         }
 
         return $this->render('vehicle/new.html.twig', [
@@ -78,8 +83,13 @@ class VehicleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
-            return $this->redirectToRoute('vehicle_index');
+            try {
+                $this->entityManager->flush();
+                $this->addFlash('success', 'Vehicle updated successfully!');
+                return $this->redirectToRoute('vehicle_index');
+            } catch (UniqueConstraintViolationException $e) {
+                $this->addFlash('error', 'The plate number is already in use.');
+            }
         }
 
         return $this->render('vehicle/edit.html.twig', [

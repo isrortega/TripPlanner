@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\VehicleRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\VehicleRepository;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: VehicleRepository::class)]
+#[UniqueEntity(fields: ['plate'], message: 'This plate number is already in use.')]
 class Vehicle
 {
     #[ORM\Id]

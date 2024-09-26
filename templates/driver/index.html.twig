@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Drivers - TripPlanner{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+      <div class="col-xl-10 offset-xl-1 col-lg-10 offset-lg-1 col-sm-12">
+        <div class="row justify-content-center">
+          {% for type, messages in app.session.flashBag.all() %}
+            {% for message in messages %}
+              <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endfor %}
+
+          <h1><i class="bi bi-person-standing"></i> Drivers List</h1>
+
+
+            {% if drivers is not empty %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="text-center">
+                            <tr>
+                                <th>Fullname</th>
+                                <th>License</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for driver in drivers %}
+                                <tr>
+                                    <td>
+                                    <a href="{{ path('driver_show', {id: driver.id}) }}" >
+                                        {{ driver.fullname }}
+                                    </a>
+                                    </td>
+                                    <td class="text-center">{{ driver.license }}</td>
+                                    <td class="text-center">
+                                        <a href="{{ path('driver_edit', { id: driver.id }) }}" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-id="{{ driver.id }}" data-token="{{ csrf_token('delete' ~ driver.id) }}">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div> <!-- /.table-responsive -->
+            {% else %}
+                <p>There are no drivers yet, add a new one ussing the <b>New driver</b> button.</p>
+            {% endif %}
+        </div>
+        <a href="{{ path('driver_new') }}" class="btn btn-primary mb-3 btn-smV">
+          <i class="bi bi-plus"></i> New driver
+        </a>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this driver?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" method="post" action="">
+                        <input type="hidden" name="_token" value="">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const deleteButtons = document.querySelectorAll('button[data-bs-target="#confirmDeleteModal"]');
+        const deleteForm = document.getElementById('deleteForm');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const driverId = button.getAttribute('data-id');
+                const csrfToken = button.getAttribute('data-token');
+
+                deleteForm.action = '{{ path('driver_delete', { id: '__driverId__' }) }}'.replace('__driverId__', driverId);
+                deleteForm.querySelector('input[name="_token"]').value = csrfToken;
+            });
+        });
+
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.classList.remove('show');
+                alert.classList.add('fade');
+            }, 10000); // 10 segundos
+        });
+    </script>
+{% endblock %}

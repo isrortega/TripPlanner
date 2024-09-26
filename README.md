@@ -75,6 +75,7 @@ docker-compose exec php bin/phpunit
 
 ## Future Improvements
 - Implement user authentication.
+- fix testing unique keys
 
 ## Author
 - [Ismael Romero Ortega](https://github.com/isrortega)

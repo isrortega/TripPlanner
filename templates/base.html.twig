@@ -18,13 +18,13 @@
                 <i class="toggleButton bi bi-list h3 px-1"></i>
             </li>
             <li class="nav-item">
-                <a class="nav-link " href="/trips"><i class="bi bi-suitcase2"></i> </a>
+                <a class="nav-link {% if app.request.get('_route') starts with 'trip_' %}active{% endif %}" href=""><i class="bi bi-suitcase2"></i> </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if app.request.get('_route') starts with 'vehicle_' %}active{% endif %}" href="{{ path('vehicle_index') }}"><i class="bi bi-car-front"></i> </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link " href="/drivers"><i class="bi bi-person-standing"></i> </a>
+                <a class="nav-link {% if app.request.get('_route') starts with 'trip_' %}active{% endif %}" href="{{ path('driver_index')}}"><i class="bi bi-person-standing"></i> </a>
             </li>
         </ul>
     </div>
@@ -38,13 +38,13 @@
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link " href="/trips"><i class="bi bi-suitcase2"></i> Trips</a>
+                    <a class="nav-link {% if app.request.get('_route') starts with 'trip_' %}active{% endif %}" href=""><i class="bi bi-suitcase2"></i> Trips</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if app.request.get('_route') starts with 'vehicle_' %}active{% endif %}" href="{{ path('vehicle_index') }}"><i class="bi bi-car-front"></i> Vehicles</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " href="/drivers"><i class="bi bi-person-standing"></i> Drivers</a>
+                    <a class="nav-link {% if app.request.get('_route') starts with 'trip_' %}active{% endif %}" href="{{ path('driver_index')}}"><i class="bi bi-person-standing"></i> Drivers</a>
                 </li>
             </ul>
         </div>

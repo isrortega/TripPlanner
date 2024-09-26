@@ -34,6 +34,11 @@ class VehicleType extends AbstractType
                 ],
             ])
             ->add('plate', TextType::class, [
+                'label' => 'Plate Number',
+                'attr' => [
+                    'minlength' => 6,
+                    'maxlength' => 15
+                ],
                 'constraints' => [
                     new NotBlank(['message' => 'Plate is required']),
                     new Length([

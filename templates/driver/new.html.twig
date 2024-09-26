@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create Driver{% endblock %}
+
+{% block body %}
+    <div class="container-md mt-4 row justify-content-sm-center">
+      <div class="col-lg-8 offset-lg-2 sm-12 col-md-10 offset-md-1">
+        <h1 class="mb-4"><i class="bi bi-person-standing"></i> Create Driver</h1>
+
+        {{ form_start(form, {'attr': {'id': 'driverForm'}}) }}
+            <div class="mb-3">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.surname) }}
+                {{ form_widget(form.surname, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.surname) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.license) }}
+                {{ form_widget(form.license, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.license) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-floppy"></i> Create driver
+            </button>
+        {{ form_end(form) }}
+
+        <a href="{{ path('driver_index') }}" class="btn btn-secondary mt-2">
+          <i class="bi bi-chevron-left"></i> Back to list
+        </a>
+      </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('driverForm');
+            form.addEventListener('submit', function (event) {
+                let isValid = true;
+                const inputs = form.querySelectorAll('input');
+
+                inputs.forEach(input => {
+                    if (!input.checkValidity()) {
+                        input.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                    }
+                });
+
+                if (!isValid) {
+                    event.preventDefault(); // Evita que el formulario se envíe si hay errores
+                }
+            });
+        });
+    </script>
+{% endblock %}
