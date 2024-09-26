@@ -70,12 +70,13 @@ TripPlanner/
 ## Testing
 To run unit tests:
 ```bash
-docker-compose exec php bin/phpunit
+docker-compose exec trip_planner php ./vendor/bin/phpunit
 ```
 
 ## Future Improvements
 - Implement user authentication.
 - fix testing unique keys
+- limit booking to future dates
 
 ## Author
 - [Ismael Romero Ortega](https://github.com/isrortega)

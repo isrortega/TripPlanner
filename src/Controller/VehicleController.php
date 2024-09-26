@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Vehicle;
 use App\Form\VehicleType;
+use App\Repository\TripRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class VehicleController extends AbstractController
 {
 
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private TripRepository $tripRepository
+    )
     {
     }
 
@@ -71,8 +75,11 @@ class VehicleController extends AbstractController
     #[Route('/{id}', name: 'vehicle_show', methods: ['GET'])]
     public function show(Vehicle $vehicle): Response
     {
+        $trips = $this->tripRepository->findLastTripsByVehicle($vehicle);
+
         return $this->render('vehicle/show.html.twig', [
             'vehicle' => $vehicle,
+            'trips' => $trips
         ]);
     }
 

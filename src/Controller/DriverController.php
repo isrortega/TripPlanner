@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Driver;
 use App\Form\DriverType;
+use App\Repository\TripRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class DriverController extends AbstractController
 {
 
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private TripRepository $tripRepository
+    )
     {
     }
 
@@ -51,8 +55,11 @@ class DriverController extends AbstractController
      #[Route('/{id}', name: 'driver_show', methods: ['GET'])]
     public function show(Driver $driver): Response
     {
+        $trips = $this->tripRepository->findLastTripsByDriver($driver);
+
         return $this->render('driver/show.html.twig', [
             'driver' => $driver,
+            'trips' => $trips
         ]);
     }
 

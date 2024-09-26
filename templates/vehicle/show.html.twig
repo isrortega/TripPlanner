@@ -26,9 +26,6 @@
             </tr>
         </table>
 
-        <a href="{{ path('vehicle_index') }}" class="btn btn-secondary mt-2">
-          <i class="bi bi-chevron-left"></i> Back to list
-        </a>
         <a href="{{ path('vehicle_edit', {id: vehicle.id}) }}" class="btn btn-warning mt-2">
           <i class="bi bi-pencil"></i> Edit
         </a>
@@ -37,6 +34,40 @@
             <i class="bi bi-trash"></i> Delete
         </button>
       </div>
+
+      <div class="col-lg-8 offset-lg-2 sm-12 col-md-10 offset-md-1 mt-5">
+            <h3 class="mb-4"><i class="bi bi-suitcase2"></i> Recent trips</h3>
+            {%if trips is  empty %}
+                <p>There are no recent trips for this vehicle</p>
+            {% else %}
+                {% if trips|length == 1 %}
+                    <p>Showing the last trip for this vehicle</p>
+                {% else %}
+                    <p>Showing the last {{ trips|length }} trips for this vehicle</p>
+                {% endif %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Driver</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trip in trips %}
+                            <tr>
+                                <td>{{ trip.driver.fullname }}</td>
+                                <td>{{ trip.stringdate }}</td>
+                            </tr>
+                            {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        <div class="col-lg-8 offset-lg-2 sm-12 col-md-10 offset-md-1 mt-3">
+            <a href="{{ path('vehicle_index') }}" class="btn btn-secondary mt-2">
+                <i class="bi bi-chevron-left"></i> Back to list
+            </a>
+        </div>
     </div>
 
     <!-- Modal -->

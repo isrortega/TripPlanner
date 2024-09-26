@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Trip;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Driver;
+use App\Entity\Vehicle;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Trip>
@@ -16,28 +18,26 @@ class TripRepository extends ServiceEntityRepository
         parent::__construct($registry, Trip::class);
     }
 
-    //    /**
-    //     * @return Trip[] Returns an array of Trip objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('t.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findLastTripsByDriver(Driver $driver, int $limit = 10)
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.driver = :driverId')
+            ->setParameter('driverId', $driver->getId())
+            ->orderBy('t.date', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Trip
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findLastTripsByVehicle(Vehicle $vehicle, int $limit = 10)
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.vehicle = :vehicleId')
+            ->setParameter('vehicleId', $vehicle->getId())
+            ->orderBy('t.date', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
 }
