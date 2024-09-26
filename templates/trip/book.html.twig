@@ -1,0 +1,178 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Book a new trip - TripPlanner{% endblock %}
+
+{% block body %}
+    <div class="container-md mt-4 row justify-content-sm-center">
+      <div class="col-lg-8 offset-lg-2 sm-12 col-md-10 offset-md-1">
+        <h1 class="mb-4"><i class="bi bi-suitcase2"></i> Book a new trip</h1>
+
+        <form id="tripBookingForm">
+            <div class="mb-3">
+                <h4><i class="bi bi-calendar"></i> Select a Date</h4>
+                <input type="date" id="tripDate" class="form-control" name="tripDate" required>
+            </div>
+            <button type="button" class="btn btn-primary" id="selectDateBtn">
+                <i class="bi bi-calendar"></i> Select Date
+            </button>
+        </form>
+        <div id="vehicleSection" class="mt-4" style="display:none;">
+        </div>
+
+        <div class="row mt-4">
+            <button type="submit" class="btn btn-success mt-2 d-none" id="bookTripBtn">
+                <i class="bi bi-suitcase2"></i> ¡Book the Trip!
+            </button>
+
+            <a href="{{ path('trip_index') }}" class="btn btn-secondary mt-2">
+                <i class="bi bi-chevron-left"></i> Back to list
+            </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">Alert</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="alertModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // date selected
+        document.getElementById("tripDate").addEventListener("change", function(){
+            const vehicleSection = document.getElementById("vehicleSection");
+            if (vehicleSection) {
+                vehicleSection.style.display = 'none';
+            }
+        });
+        document.getElementById('selectDateBtn').addEventListener('click', function() {
+            const selectedDate = document.getElementById('tripDate').value;
+            const url = `/trips/available-vehicles?date=${selectedDate}`;
+
+            if (!selectedDate) {
+                showAlert('Please select a date', 'warning');
+                return;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    let vehicleSection = document.getElementById('vehicleSection');
+                    vehicleSection.innerHTML = data.html;
+                    vehicleSection.style.display = 'block';
+                })
+                .catch(error => {
+                    showAlert(`Fetch error: ${error.message}`, 'danger');
+                });
+        });
+
+        // vehicle selected
+        document.getElementById('vehicleSection').addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'selectVehicleBtn') {
+                const vehicleId = document.getElementById('vehicleSelect').value;
+                const selectedDate = document.getElementById('tripDate').value;
+
+                if (vehicleId == 0) {
+                    showAlert('Please select a vehicle', 'warning');
+                return;
+                }
+
+                fetch(`/trips/available-drivers?date=${selectedDate}&vehicle=${vehicleId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let driverSection = document.getElementById('driverSection');
+                        driverSection.innerHTML = data.html;
+                        driverSection.style.display = 'block';
+                    });
+            }
+
+            if (e.target && e.target.id === 'vehicleSelect') {
+                const driverSection = document.getElementById('driverSection');
+                if (driverSection) {
+                    driverSection.style.display = 'none';
+                }
+            }
+        });
+
+        // alert function
+        const alertContainer = document.getElementById('alertContainer');
+        function showAlert(message, type = 'danger') {
+            const alertModal = new bootstrap.Modal(document.getElementById('alertModal'));
+            const alertModalBody = document.getElementById('alertModalBody');
+            const modalHeader = document.querySelector('.modal-header');
+
+            alertModalBody.innerHTML = message;
+            modalHeader.className = `modal-header bg-${type}`;
+            alertModal.show();
+
+            setTimeout(() => {
+                alertModal.hide();
+            }, 5000);
+        }
+
+        // Enable the trip button
+        document.addEventListener('change', function(event) {
+            if (event.target && event.target.id === 'driverSelect') {
+                const selectedDriver = event.target.value;
+
+                const bookTripBtn = document.getElementById('bookTripBtn');
+                if (selectedDriver != 0) {
+                    bookTripBtn.classList.remove('d-none');
+                } else {
+                    bookTripBtn.classList.add('d-none');
+                }
+            }
+        });
+
+        // Book the trip
+        document.getElementById('bookTripBtn').addEventListener('click', function() {
+            console.log('Booking the trip');
+            const selectedDate = document.getElementById('tripDate').value;
+            const selectedVehicle = document.getElementById('vehicleSelect').value;
+            const selectedDriver = document.getElementById('driverSelect').value;
+
+            if (!selectedDate || !selectedVehicle || !selectedDriver) {
+                showAlert('Please select a date, vehicle, and driver.', 'warning');
+                return;
+            }
+
+            fetch('/trips/booking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    date: selectedDate,
+                    vehicle: selectedVehicle,
+                    driver: selectedDriver
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/trips';
+                } else {
+                    showAlert(data.error, 'danger');
+                }
+            })
+            .catch(error => {
+                showAlert('An unexpected error occurred.', 'danger');
+                console.error('Error:', error);
+            });
+        });
+    </script>
+
+{% endblock %}

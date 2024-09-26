@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Trip;
 use App\Entity\Driver;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Driver>
@@ -14,6 +15,18 @@ class DriverRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Driver::class);
+    }
+
+    public function findAvailableOnDateAndLicense(\DateTimeInterface $date, string $licenseRequired)
+    {
+        return $this->createQueryBuilder('d')
+            ->leftJoin('App\Entity\Trip', 't', 'WITH', 't.driver = d.id AND t.date = :date')
+            ->where('t.id IS NULL')
+            ->andWhere('d.license = :license')
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->setParameter('license', $licenseRequired)
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**

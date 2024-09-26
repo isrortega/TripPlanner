@@ -1,0 +1,11 @@
+<h3><i class="bi bi-person-standing"></i>Select a Driver</h3>
+<select id="driverSelect" class="form-select">
+    {% if drivers is not empty %}
+      <option>Select a driver</option>
+    {% endif %}
+    {% for driver in drivers %}
+        <option value="{{ driver.id }}">{{ driver.getFullNameAndLicense() }}</option>
+    {% else %}
+        <option>No drivers available on this date or with this license.</option>
+    {% endfor %}
+</select>

@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Trips - TripPlanner{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+      <div class="col-xl-10 offset-xl-1 col-lg-10 offset-lg-1 col-sm-12">
+        <div class="row justify-content-center">
+          {% for type, messages in app.session.flashBag.all() %}
+            {% for message in messages %}
+              <div class="alert alert-{{ type }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endfor %}
+
+          <h1><i class="bi bi-suitcase2"></i> Trips List</h1>
+
+
+          {% if trips is not empty %}
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                  <thead class="text-center">
+                      <tr>
+                          <th>Vehicle</th>
+                          <th>Driver</th>
+                          <th>Brand</th>
+                          <th>Model</th>
+                          <th>License</th>
+                          <th>Date</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for trip in trips %}
+                          <tr>
+                              <td class="text-center">
+                                <a href="{{ path('vehicle_show', {id: trip.vehicle.id}) }}" >
+                                  {{ trip.vehicle.plate }}
+                                </a>
+                              </td>
+                              <td>
+                                <a href="{{ path('driver_show', {id: trip.driver.id}) }}" >
+                                    {{ trip.driver.fullname }}
+                                </a>
+                              </td>
+                              <td>{{ trip.vehicle.brand }}</td>
+                              <td>{{ trip.vehicle.model }}</td>
+                              <td class="text-center">{{ trip.driver.license }}</td>
+                              <td>{{ trip.stringdate }}</td>
+                          </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+            </div> <!-- /.table-responsive -->
+          {% else %}
+              <p>There are no trips booked yet, book a new one using the <b>Book a new trip</b> button.</p>
+          {% endif %}
+        </div>
+        <a href="{{ path('trip_book') }}" class="btn btn-primary mb-3 btn-smV">
+          <i class="bi bi-suitcase2"></i> Book a new trip
+        </a>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this vehicle?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteForm" method="post" action="">
+                        <input type="hidden" name="_token" value="">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const deleteButtons = document.querySelectorAll('button[data-bs-target="#confirmDeleteModal"]');
+        const deleteForm = document.getElementById('deleteForm');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const vehicleId = button.getAttribute('data-id');
+                const csrfToken = button.getAttribute('data-token');
+
+                deleteForm.action = '{{ path('vehicle_delete', { id: '__vehicleId__' }) }}'.replace('__vehicleId__', vehicleId);
+                deleteForm.querySelector('input[name="_token"]').value = csrfToken;
+            });
+        });
+
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.classList.remove('show');
+                alert.classList.add('fade');
+            }, 10000); // 10 segundos
+        });
+    </script>
+{% endblock %}

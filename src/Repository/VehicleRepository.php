@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Trip;
 use App\Entity\Vehicle;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Vehicle>
@@ -14,6 +15,16 @@ class VehicleRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Vehicle::class);
+    }
+
+    public function findAvailableOnDate(\DateTimeInterface $date)
+    {
+        return $this->createQueryBuilder('v')
+            ->leftJoin('App\Entity\Trip', 't', 'WITH', 't.vehicle = v.id AND t.date = :date')
+            ->where('t.id IS NULL')
+            ->setParameter('date', $date->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**

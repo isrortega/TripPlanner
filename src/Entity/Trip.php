@@ -91,5 +91,10 @@ class Trip
 
         return $this;
     }
+    
+    public function getStringdate(): string
+    {
+        return $this->date ? $this->date->format('m/d/Y') : '';
+    }
 
 }

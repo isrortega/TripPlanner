@@ -1,0 +1,16 @@
+<h4><i class="bi bi-car-front"></i> Select a Vehicle</h4>
+<select id="vehicleSelect" class="form-select">
+    {% if availableVehicles is not empty %}
+        <option value=0>Select a vehicle</option>
+    {% endif %}
+    {% for vehicle in availableVehicles %}
+        <option value="{{ vehicle.id }}">{{ vehicle.fullInfo }}</option>
+    {% else %}
+        <option>No vehicles available on this date.</option>
+    {% endfor %}
+</select>
+<button type="button" class="btn btn-primary mt-2" id="selectVehicleBtn">Select Vehicle</button>
+
+<div id="driverSection" class="mt-4" style="display:none;">
+</div>
+
