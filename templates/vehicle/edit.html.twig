@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Vehicle{% endblock %}
+
+{% block body %}
+    <div class="container-md mt-4 row justify-content-sm-center">
+      <div class="col-lg-8 offset-lg-2 sm-12 col-md-10 offset-md-1">
+        <h1 class="mb-4"><i class="bi bi-car-front"></i> Edit Vehicle</h1>
+
+        {{ form_start(form, {'attr': {'id': 'vehicleForm'}}) }}
+            <div class="mb-3">
+                {{ form_label(form.brand) }}
+                {{ form_widget(form.brand, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.brand) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.model) }}
+                {{ form_widget(form.model, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.model) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.plate) }}
+                {{ form_widget(form.plate, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.plate) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.licenseRequired) }}
+                {{ form_widget(form.licenseRequired, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.licenseRequired) }}
+            </div>
+            <button type="submit" class="btn btn-warning">
+              <i class="bi bi-floppy2-fill"></i> Update
+            </button>
+        {{ form_end(form) }}
+
+        <a href="{{ path('vehicle_index') }}" class="btn btn-secondary mt-2">
+          <i class="bi bi-chevron-left"></i> Back to list
+        </a>
+      </div>
+    </div>
+{% endblock %}

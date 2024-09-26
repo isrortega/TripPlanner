@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create Vehicle{% endblock %}
+
+{% block body %}
+    <div class="container-md mt-4 row justify-content-sm-center">
+      <div class="col-lg-8 offset-lg-2 sm-12 col-md-10 offset-md-1">
+        <h1 class="mb-4"><i class="bi bi-car-front"></i> Create Vehicle</h1>
+
+        {{ form_start(form, {'attr': {'id': 'vehicleForm'}}) }}
+            <div class="mb-3">
+                {{ form_label(form.brand) }}
+                {{ form_widget(form.brand, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.brand) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.model) }}
+                {{ form_widget(form.model, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.model) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.plate) }}
+                {{ form_widget(form.plate, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.plate) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.licenseRequired) }}
+                {{ form_widget(form.licenseRequired, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.licenseRequired) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-floppy"></i> Create
+            </button>
+        {{ form_end(form) }}
+
+        <a href="{{ path('vehicle_index') }}" class="btn btn-secondary mt-2">
+          <i class="bi bi-chevron-left"></i> Back to list
+        </a>
+      </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('vehicleForm');
+            form.addEventListener('submit', function (event) {
+                let isValid = true;
+                const inputs = form.querySelectorAll('input');
+
+                inputs.forEach(input => {
+                    if (!input.checkValidity()) {
+                        input.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                    }
+                });
+
+                if (!isValid) {
+                    event.preventDefault(); // Evita que el formulario se envíe si hay errores
+                }
+            });
+        });
+    </script>
+{% endblock %}
