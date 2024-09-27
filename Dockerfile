@@ -18,19 +18,15 @@ RUN apt-get update && apt-get install -y \
 
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-WORKDIR /var/www/symfony
-COPY . /var/www/symfony
 
-# Copy and fix entrypoint script permissions
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# Set working directory
+WORKDIR /var/www/symfony
+
+COPY . /var/www/symfony
 
 # sets project permissions
 RUN chown -R www-data:www-data /var/www/symfony
 USER www-data
 
-# Sets the script as the entrypoint
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 EXPOSE 9000
-
 CMD ["php-fpm"]

@@ -30,7 +30,6 @@ List the technologies and versions needed to run the project
 ## Project Structure
 TripPlanner/
 ├── docker-compose.yml (Docker Compose configuration file for setting up containers)
-├── docker-entrypoint.sh (Custom entrypoint script to initial composer install)
 ├── Dockerfile (Dockerfile that defines the image setup for the application)
 ├── nginx/
 │   └── nginx.conf (Main Nginx configuration file)
@@ -57,11 +56,19 @@ TripPlanner/
    ```bash
    cd TripPlanner
    ```
-3. Start Docker containers:
+3. Run composer install
+   ```bash
+   docker run --rm -v $(pwd):/app --user 1000:1000 -w /app composer update
+   ```
+4. Start Docker containers:
    ```bash
    docker-compose up -d
    ```
-   There is no need to run the migrations because the docker-entrypoint file handles this
+5. Run migrations:
+   ```bash
+   docker-compose exec --user 1000:1000 trip_planner bin/console doctrine:migrations:migrate
+   ```
+
 
 ## Usage
 - Access the trip list: `http://localhost:8080/trips`
